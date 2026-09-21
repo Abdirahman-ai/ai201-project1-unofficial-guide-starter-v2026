@@ -23,8 +23,10 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
+The advice threads cover several different topics, and some answers may only
+appear in a small part of the corpus. I chose 4 of 5 because I expect the
+retriever to find the right information most of the time without requiring
+perfect retrieval for every question.
 
 ---
 
@@ -33,8 +35,9 @@ contains the answer.
 Every answer the system produces names at least one source document.
 
 **Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
+Since the system is supposed to answer from the advice documents, every answer
+should show where the information came from. If a source is missing, it would
+be harder to tell whether the answer was actually grounded in the corpus.
 
 ---
 
@@ -50,12 +53,15 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
+What did your distances look like when you set the cutoff in Milestone 4?
+     Was there a clean gap, or did the two groups overlap?
 
 ---
 
 ## 4. Something about your chunks
+
+For at least 4 of 5 sampled chunks, each chunk should read as a complete thought
+without a sentence being cut off at the beginning or end.
 
 <!-- YOU WRITE THIS ONE.
 
@@ -72,12 +78,15 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+The advice thread documents can contain multiple ideas, so I want most chunks to
+preserve enough context to make sense on their own without becoming too large.
 
 
 ---
 
 ## 5. Your choice
+For at least 4 of my 5 test questions, the final answer should include the
+expected word or phrase listed in questions.py.
 
 <!-- YOU WRITE THIS ONE TOO.
 
@@ -90,8 +99,8 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
-
+I chose 4 of 5 because I want the system to answer most of my test questions
+correctly while allowing for one retrieval or wording mistake.
 
 ---
 
