@@ -20,12 +20,13 @@
 # Unit 1
 
 ## What This Does
+The Unofficial Guide is a retrieval-based question answering system built using
+the advice_threads corpus. It loads and chunks student advice posts, embeds the
+chunks, and retrieves the most relevant information for a user's question.
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+The system answers questions using only the retrieved documents and includes the
+source it used. It also uses a relevance cutoff so that questions outside the
+corpus are rejected instead of producing unsupported answers.
 
 ## Chunking Strategy
 
@@ -164,15 +165,14 @@ I chose 0.65 because it falls clearly between the two groups.
 |  |  |  |
 
 ## How I Used AI
+I used ChatGPT to help me think through a chunking strategy for the advice_threads
+corpus. The original splitter used fixed character windows and produced a
+2-character chunk. I used the suggestion as a starting point, then changed the
+chunker so it splits on paragraph boundaries and keeps complete replies together.
 
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
-
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
+I also used ChatGPT to help interpret my retrieval distance results. I compared
+the five in-scope distances with five out-of-scope distances, then chose a
+relevance cutoff of 0.65 based on the gap between the two groups.
 
 **1.**
 
