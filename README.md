@@ -136,14 +136,19 @@ without reading what came before or after?
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question:** How much RAM do students recommend for a CS laptop?
 
-**Answer:**
+**Answer:** Students recommend 16GB of RAM for a CS laptop, noting that 8GB can struggle by the final project and everything else is less noticeable.
+
+**Source:** thread_laptop_specs.txt
 
 ```
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.65
+My five in-scope questions had best distances from 0.200 to 0.484.
+My five out-of-scope questions had best distances from 0.807 to 0.952.
+I chose 0.65 because it falls clearly between the two groups.
 
 <!-- The number you set in config.py, and how you got there.
 
