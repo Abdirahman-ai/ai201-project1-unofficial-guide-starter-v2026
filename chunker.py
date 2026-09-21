@@ -97,7 +97,60 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
       - Would splitting on paragraph breaks keep more thoughts intact than
         splitting on a character count?
     """
-    return fallback_split(documents)
+    chunks: list[Chunk] = []
+    target_size = 600
+
+    for doc in documents:
+        # Split on blank lines so thread headers and replies stay intact.
+        blocks = [block.strip() for block in doc.text.split("\n\n") if block.strip()]
+
+        if not blocks:
+            continue
+
+        # Keep the THREAD line available as context for later chunks.
+        thread_header = blocks[0] if blocks[0].startswith("THREAD:") else ""
+
+        current_blocks: list[str] = []
+        index = 0
+
+        for block in blocks:
+            candidate = "\n\n".join(current_blocks + [block])
+
+            # If adding this block would make the chunk too large,
+            # save the current chunk first.
+            if current_blocks and len(candidate) > target_size:
+                text = "\n\n".join(current_blocks)
+
+                chunks.append(
+                    Chunk(
+                        text=text,
+                        source=doc.source,
+                        index=index,
+                        produced_by="chunker.py::split_documents",
+                    )
+                )
+                index += 1
+
+                # Give the next chunk the thread question for context.
+                if thread_header and block != thread_header:
+                    current_blocks = [thread_header, block]
+                else:
+                    current_blocks = [block]
+            else:
+                current_blocks.append(block)
+
+        # Save anything left over.
+        if current_blocks:
+            chunks.append(
+                Chunk(
+                    text="\n\n".join(current_blocks),
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:

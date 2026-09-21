@@ -53,29 +53,82 @@
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: `thread_first_gen.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+THREAD: Anything specific for first-generation students?
+
+--- reply 1 (33 votes) ---
+The advising office has a specific programme and it is genuinely good, but it is opt-in and badly publicised. Ask for it by name.
+
+--- reply 2 (41 votes) ---
+The thing I'd say: the unwritten rules are the hard part, not the coursework. Ask about the unwritten rules explicitly. People are happy to explain them and nobody volunteers them.
+
+--- reply 3 (16 votes) ---
+Emergency fund for textbooks and travel exists and is not means-tested beyond a short form.
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: `thread_first_gen.txt#0` — produced by: `chunker.py::fallback_split`
 
 ```
+THREAD: Anything specific for first-generation students?
+
+--- reply 1 (33 votes) ---
+The advising office has a specific programme and it is genuinely good, but it is opt-in and badly publicised. Ask for it by name.
+
+--- reply 2 (41 votes) ---
+The thing I'd say: the unwritten rules are the hard part, not the coursework. Ask about the unwritten rules explicitly. People are happy to explain them and nobody volunteers them.
+
+--- reply 3 (16 votes) ---
+Emergency fund for textbooks and travel exists and is not means-tested beyond a short form.
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: `thread_laptop_specs.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+THREAD: How much laptop do I actually need for CS courses?
+
+--- reply 1 (31 votes) ---
+Less than the recommended spec page says. 16GB of RAM is the one number worth paying for; everything else you'll never notice.
+
+--- reply 2 (18 votes) ---
+Adding: the lab machines exist and are better than anything you'll buy. For the heavy assignments people just use those.
+
+--- reply 3 (12 votes) ---
+I did two years on an 8GB machine and it was fine until the last project, at which point it very much wasn't. 16 is the answer.
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: `thread_office_hours_etiquette.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+THREAD: Is it weird to go to office hours with no specific question?
+
+--- reply 1 (44 votes) ---
+No, and this is the single most common thing first years get wrong. 'I'm following the lectures but I don't feel like I understand the shape of it' is a completely normal thing to say.
+
+--- reply 2 (29 votes) ---
+They're usually empty. You are doing the instructor a favour by turning up.
+
+--- reply 3 (18 votes) ---
+If it helps, treat it as a standing appointment. Go every week for a month and it stops feeling like a thing.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: `thread_professor_email.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+THREAD: Do professors actually answer email?
+
+--- reply 1 (21 votes) ---
+Varies enormously. General rule I've found: if the syllabus states a response window, it's honoured. If it doesn't, assume 48 hours and don't panic before then.
+
+--- reply 2 (33 votes) ---
+Office hours are dramatically more effective than email for anything that takes more than two sentences to answer. They're also usually empty.
+
+--- reply 3 (15 votes) ---
+Empty office hours is the biggest unused resource here and I say that having wasted a year not going.
+
+For each one, ask: could someone answer a question using only this,
+without reading what came before or after?
 ```
 
 ## Sample Answer
