@@ -102,6 +102,10 @@ expected word or phrase listed in questions.py.
 I chose 4 of 5 because I want the system to answer most of my test questions
 correctly while allowing for one retrieval or wording mistake.
 
+
+> **Revised in unit 2:** For at least 4 of my 5 test questions, the final answer should contain the key fact or facts represented by the `expects` value in `questions.py`, even if the answer uses different wording or word order.
+>
+> **Why revised:** The original criterion treated each `expects` value like one exact phrase. Some of my expected answers contain multiple facts joined together, so correct answers were counted as failures when they expressed the same information with different wording. The revised criterion checks whether the expected facts are present instead of requiring an exact full-string match.
 ---
 
 <!-- ─────────────────────────────────────────────────────────────────────────

@@ -205,11 +205,108 @@ relevance cutoff of 0.65 based on the gap between the two groups.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunks contain the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Sampled chunks read as complete thoughts | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Final answer includes the expected word or phrase | 4 of 5 | 2/5 | 2/5 | 2/5 | MISSED |
+
+**Criterion 5 revision:** The original exact-phrase measurement missed correct answers that expressed the expected facts using different wording. Using the revised Unit 2 criterion — checking for the expected facts rather than an exact full-string match — the result was 5/5 in all three runs.
+
+### Real output used for the criteria
+
+**Criterion 1 — Retrieved chunks contain the answer**
+
+Produced by `store.py::search`.
+
+For the question:
+
+```text
+When is laundry actually free in the dorms?
+```
+
+one of the retrieved chunks was:
+
+```text
+THREAD: When is laundry actually free in the dorms?
+
+--- reply 1 (27 votes) ---
+Tuesday and Wednesday mornings, every building. Sunday evening is the worst and it isn't close.
+```
+
+The same check was performed for all five test questions, and at least one retrieved chunk contained the answer for each one.
+
+**Criterion 2 — Every answer names a source**
+
+Produced by `run_eval.py::main`.
+
+```text
+Students recommend 16GB of RAM, noting that 8GB can struggle by the final project and that 16GB is the one number worth paying for (thread_laptop_specs.txt).
+```
+
+All five generated answers named at least one source in each of the three runs.
+
+**Criterion 3 — Gate stops out-of-corpus questions**
+
+Produced by `run_eval.py::check_out_of_scope`.
+
+```text
+refused  (best distance 0.918)  What is the capital of Mongolia?
+refused  (best distance 0.930)  How do I change the oil in a diesel engine?
+refused  (best distance 0.952)  Who won the 1994 World Cup?
+refused  (best distance 0.807)  What is the recommended dosage of ibuprofen for a headache?
+refused  (best distance 0.871)  How do I write a for loop in Rust?
+-> gate refused 5 of 5
+```
+
+**Criterion 4 — Sampled chunks read as complete thoughts**
+
+Produced by `chunker.py::split_documents` and displayed by `python app.py chunks`.
+
+Example:
+
+```text
+THREAD: Do professors actually answer email?
+
+--- reply 1 (21 votes) ---
+Varies enormously. General rule I've found: if the syllabus states a response window, it's honoured. If it doesn't, assume 48 hours and don't panic before then.
+
+--- reply 2 (33 votes) ---
+Office hours are dramatically more effective than email for anything that takes more than two sentences to answer. They're also usually empty.
+
+--- reply 3 (15 votes) ---
+Empty office hours is the biggest unused resource here and I say that having wasted a year not going.
+```
+
+All five sampled chunks started and ended with complete thoughts. Re-running the chunk sample twice produced the same five chunks and the same 5/5 result.
+
+**Criterion 5 — Final answer includes the expected word or phrase**
+
+Produced by `run_eval.py::main`.
+
+For example, `questions.py` expected:
+
+```text
+ask about the unwritten rules and use the advising office
+```
+
+but the generated answer was:
+
+```text
+First-generation students should ask for the advising office's specific programme by name, since it is opt-in and badly publicised (thread_first_gen.txt). Additionally, they should explicitly ask about the unwritten rules, because people are happy to explain them even though nobody volunteers them (thread_first_gen.txt).
+```
+
+The answer contains both expected facts, but not as one exact phrase. Under literal full-phrase matching, only 2 of 5 questions matched in each run. This exposed a problem with the original measurement, so Criterion 5 was revised in Unit 2 to measure the expected facts rather than exact wording.
+
+## Verdicts
+
+| # | Criterion | Verdict | How I decided |
+|---|---|---|---|
+| 1 | Retrieved chunks contain the answer | MET | All 5 test questions retrieved at least one chunk containing the information needed for the answer, exceeding the target of 4 of 5. |
+| 2 | Every answer names a source | MET | All 5 answers named at least one source document in each of the three runs. |
+| 3 | Gate stops out-of-corpus questions | MET | The relevance gate refused all 5 out-of-corpus questions, exceeding the target of 4 of 5. |
+| 4 | Sampled chunks read as complete thoughts | MET | All 5 sampled chunks started and ended cleanly and could be understood without text from another chunk. The same result appeared in all three checks. |
+| 5 | Final answer includes the expected word or phrase | MISSED / REVISED | Exact full-phrase matching produced 2/5 in all three runs even though several answers contained the correct facts using different wording. I kept the original criterion and added a Unit 2 revision that measures whether the expected facts are present instead. Under the revised measurement, all 5 answers passed in each run. |
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
