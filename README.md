@@ -1,6 +1,7 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+**Name:** Abdinahmen Ahmed  
+**Corpus:** `advice_threads`
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -30,8 +31,11 @@ corpus are rejected instead of producing unsupported answers.
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** Variable — based on complete thread replies rather than a fixed character size.
+
+**Overlap:** None between reply-based chunks.
+
+I changed the original fixed-character splitter because it produced awkward fragments, including a very small chunk. The advice_threads corpus is made of short discussion threads with reply boundaries, so splitting on paragraph/reply boundaries preserves complete thoughts better than cutting at an arbitrary character count.
 
 <!-- What about YOUR documents made you pick these numbers? Short posts and
      long sectioned guides don't want the same chunking, and "800 seemed
@@ -161,8 +165,17 @@ I chose 0.65 because it falls clearly between the two groups.
      Milestone 4. -->
 
 | Question | In corpus? | Best distance |
-|---|---|---|
-|  |  |  |
+|---|---|---:|
+| When is laundry actually free in the dorms? | Yes | 0.328 |
+| What should first-generation students do to get help or advice? | Yes | 0.484 |
+| How much RAM do students recommend for a CS laptop? | Yes | 0.200 |
+| When should you use the pass/fail option? | Yes | 0.422 |
+| Do professors actually answer email, and how fast should students expect a reply? | Yes | 0.278 |
+| What is the capital of Mongolia? | No | 0.918 |
+| How do I change the oil in a diesel engine? | No | 0.930 |
+| Who won the 1994 World Cup? | No | 0.952 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.807 |
+| How do I write a for loop in Rust? | No | 0.871 |
 
 ## How I Used AI
 For Unit 2, I used ChatGPT to help review my before-run results, compare them against the acceptance criteria I had already written, and identify that Criterion 5 was measuring exact wording rather than answer correctness.
@@ -289,16 +302,6 @@ First-generation students should ask for the advising office's specific programm
 
 The answer contains both expected facts, but not as one exact phrase. Under literal full-phrase matching, only 2 of 5 questions matched in each run. This exposed a problem with the original measurement, so Criterion 5 was revised in Unit 2 to measure the expected facts rather than exact wording.
 
-## Verdicts
-
-| # | Criterion | Verdict | How I decided |
-|---|---|---|---|
-| 1 | Retrieved chunks contain the answer | MET | All 5 test questions retrieved at least one chunk containing the information needed for the answer, exceeding the target of 4 of 5. |
-| 2 | Every answer names a source | MET | All 5 answers named at least one source document in each of the three runs. |
-| 3 | Gate stops out-of-corpus questions | MET | The relevance gate refused all 5 out-of-corpus questions, exceeding the target of 4 of 5. |
-| 4 | Sampled chunks read as complete thoughts | MET | All 5 sampled chunks started and ended cleanly and could be understood without text from another chunk. The same result appeared in all three checks. |
-| 5 | Final answer includes the expected word or phrase | MISSED / REVISED | Exact full-phrase matching produced 2/5 in all three runs even though several answers contained the correct facts using different wording. I kept the original criterion and added a Unit 2 revision that measures whether the expected facts are present instead. Under the revised measurement, all 5 answers passed in each run. |
-
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
      Name the file and function that produced it. -->
@@ -314,13 +317,14 @@ The answer contains both expected facts, but not as one exact phrase. Under lite
 
      Milestone 2. -->
 
+
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunks contain the answer | MET | All 5 test questions retrieved at least one chunk containing the information needed for the answer, exceeding the target of 4 of 5. |
+| 2 | Every answer names a source | MET | All 5 answers named at least one source document in each of the three runs. |
+| 3 | Gate stops out-of-corpus questions | MET | The relevance gate refused all 5 out-of-corpus questions, exceeding the target of 4 of 5. |
+| 4 | Sampled chunks read as complete thoughts | MET | All 5 sampled chunks started and ended cleanly and could be understood without text from another chunk. The same result appeared in all three checks. |
+| 5 | Final answer includes the expected word or phrase | MISSED | Exact full-phrase matching produced 2/5 in all three runs even though several answers contained the correct facts using different wording. I kept the original criterion and added a Unit 2 revision that measures whether the expected facts are present instead. Under the revised measurement, all 5 answers passed in each run. |
 
 ## Diagnoses
 
@@ -341,7 +345,6 @@ The answer contains both expected facts, but not as one exact phrase. Under lite
      low, and which one you'd tighten and to what.
 
      Milestone 3. -->
-## Diagnoses
 
 After reviewing the before-run results, I did not find a true retrieval or generation failure after revising Criterion 5's measurement. Criteria 1 through 4 were met in all three checks, and the revised version of Criterion 5 was also met.
 
@@ -424,30 +427,6 @@ The hybrid search did not clearly improve the system on my five acceptance crite
 
 The change did alter some of the lower-ranked chunks returned for the test questions, but that did not affect whether the correct information was available or whether the generated answers were correct. The experiment therefore showed that adding BM25 to the current semantic retrieval was not enough to improve this particular ranking issue.
 
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
-
-### Run Log — After
-
-<!-- Same format, same five criteria, three runs each.
-     `python run_eval.py --label after` -->
-
-| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
-|---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
-
-**Did it help?**
-
-<!-- Say plainly whether it did, and how you know. If it made things worse,
-     say that — a change that backfired, honestly reported, earns full credit
-     and is more interesting than one that worked. What matters is that you can
-     tell.
-
-     Milestone 4. -->
 
 ## What's Still Broken
 

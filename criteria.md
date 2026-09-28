@@ -53,12 +53,14 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
-What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap?
+My in-scope questions had best distances from about 0.200 to 0.484, while my
+out-of-scope questions ranged from about 0.807 to 0.952. Since there was a
+clear gap between the two groups, I chose a target of at least 4 of 5 refusals
+to make sure the relevance gate reliably rejects unrelated questions.
 
 ---
 
-## 4. Something about your chunks
+## 4. Sampled chunks read as complete thoughts
 
 For at least 4 of 5 sampled chunks, each chunk should read as a complete thought
 without a sentence being cut off at the beginning or end.
@@ -84,7 +86,7 @@ preserve enough context to make sense on their own without becoming too large.
 
 ---
 
-## 5. Your choice
+## 5. Final answer includes the expected word or phrase
 For at least 4 of my 5 test questions, the final answer should include the
 expected word or phrase listed in questions.py.
 
