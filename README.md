@@ -376,9 +376,62 @@ That would test retrieval ranking quality rather than only checking whether the 
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:**  
+I added hybrid retrieval that combines semantic similarity with BM25 keyword ranking using Reciprocal Rank Fusion. I kept the original cosine distance on each retrieved result so the existing relevance gate and its 0.65 cutoff continued to use the same measurement as before.
 
-**Why I picked it:**
+**Why I picked it:**  
+My before-run results showed that the system consistently retrieved the correct information, but the most useful chunk was not always ranked first. For the pass/fail question, `thread_pass_fail.txt#1`, which mainly contained usage limits, ranked above `thread_pass_fail.txt#0`, which contained the information needed to answer the question. I chose hybrid search because keyword matching might improve the ranking of chunks containing the exact terms used in the question.
+
+### Run Log — After
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Retrieved chunks contain the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Sampled chunks read as complete thoughts | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Final answer includes the expected word or phrase | 4 of 5 | 2/5 | 2/5 | 2/5 | MISSED |
+
+**Criterion 5 revision:** Under the revised Unit 2 measurement that checks whether the expected facts are present rather than requiring an exact full-string match, the result remained 5/5 in all three runs.
+
+### Real output — After
+
+The after run was produced by `run_eval.py::main` using the updated `store.py::search`.
+
+For the pass/fail question, the hybrid search still ranked the two chunks in this order:
+
+```text
+1 thread_pass_fail.txt#1 0.4224
+2 thread_pass_fail.txt#0 0.4261
+```
+
+The second chunk contained the more directly useful answer about using pass/fail for a course outside the major and deciding after the midterm.
+
+The generated answer still correctly used the available information:
+
+```text
+Based on the documents, you should use the pass/fail option for a course outside your major that you are taking out of curiosity. Additionally, you can take a course pass/fail and decide to declare it late—up to week eight—after taking the midterm first.
+
+Source: thread_pass_fail.txt (and thread_first_year_regret.txt)
+```
+
+The relevance gate also continued to refuse all five out-of-corpus questions:
+
+```text
+What is the capital of Mongolia?                                  refused
+How do I change the oil in a diesel engine?                      refused
+Who won the 1994 World Cup?                                      refused
+What is the recommended dosage of ibuprofen for a headache?      refused
+How do I write a for loop in Rust?                               refused
+
+Gate refused 5 of 5.
+```
+
+**Did it help?**
+
+The hybrid search did not clearly improve the system on my five acceptance criteria. The before and after results were the same for every criterion, and the specific pass/fail ranking issue I was trying to improve remained: `thread_pass_fail.txt#1` stayed above the more useful `thread_pass_fail.txt#0`.
+
+The change did alter some of the lower-ranked chunks returned for the test questions, but that did not affect whether the correct information was available or whether the generated answers were correct. The experiment therefore showed that adding BM25 to the current semantic retrieval was not enough to improve this particular ranking issue.
 
 <!-- Connect it to a specific diagnosis above in one sentence. If you can't,
      you picked a fix because it sounded impressive. -->

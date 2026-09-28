@@ -20,6 +20,7 @@ rest of the project if they were wrong:
 import os
 import shutil
 from dataclasses import dataclass
+from rank_bm25 import BM25Okapi
 
 # Must be set BEFORE chromadb is imported. Without it, some Chroma versions
 # print "Failed to send telemetry event ..." on every single call — which looks
@@ -185,9 +186,11 @@ def search(
     variant: str = "default",
 ) -> list[Result]:
     """
-    Retrieve the chunks closest in meaning to a question.
+    Retrieve chunks using hybrid semantic + BM25 ranking.
 
-    Returns them nearest-first, each with its distance.
+    Semantic cosine distance is still stored on every Result so the
+    relevance gate continues to use the same distance measurement
+    and threshold as before.
     """
     top_k = top_k or config.TOP_K
     name = config.collection_name(corpus, variant)
@@ -199,24 +202,91 @@ def search(
             f"No index called '{name}'. Run `python app.py index` first."
         ) from exc
 
+    count = collection.count()
+
+    # Get semantic distances for the whole small corpus so every chunk can
+    # participate in both semantic and keyword ranking.
     raw = collection.query(
         query_embeddings=embed([question]),
-        n_results=min(top_k, collection.count()),
+        n_results=count,
+    )
+
+    documents = raw["documents"][0]
+    metadatas = raw["metadatas"][0]
+    distances = raw["distances"][0]
+
+    if not documents:
+        return []
+
+    # Semantic rank: collection.query already returns nearest first.
+    semantic_rank = {
+        i: rank
+        for rank, i in enumerate(range(len(documents)), start=1)
+    }
+
+    # BM25 keyword ranking.
+    tokenized_docs = [doc.lower().split() for doc in documents]
+    tokenized_query = question.lower().split()
+
+    bm25 = BM25Okapi(tokenized_docs)
+    bm25_scores = bm25.get_scores(tokenized_query)
+
+    bm25_order = sorted(
+        range(len(documents)),
+        key=lambda i: bm25_scores[i],
+        reverse=True,
+    )
+    bm25_rank = {
+        i: rank
+        for rank, i in enumerate(bm25_order, start=1)
+    }
+
+    # Reciprocal Rank Fusion combines the two rankings without pretending
+    # cosine distance and BM25 score are on the same numeric scale.
+    rrf_k = 60
+    hybrid_scores = {
+        i: (
+            1 / (rrf_k + semantic_rank[i])
+            + 1 / (rrf_k + bm25_rank[i])
+        )
+        for i in range(len(documents))
+    }
+
+    hybrid_order = sorted(
+        range(len(documents)),
+        key=lambda i: hybrid_scores[i],
+        reverse=True,
+    )
+
+    selected = hybrid_order[:top_k]
+
+    # Preserve the original nearest semantic result somewhere in the returned
+    # set so gate.py still sees the same best cosine distance used before.
+    semantic_best = 0
+    if semantic_best not in selected:
+        selected[-1] = semantic_best
+
+    # Put the selected chunks back in hybrid-score order.
+    selected = sorted(
+        set(selected),
+        key=lambda i: hybrid_scores[i],
+        reverse=True,
     )
 
     results: list[Result] = []
-    for text, meta, distance in zip(
-        raw["documents"][0], raw["metadatas"][0], raw["distances"][0]
-    ):
+    for i in selected:
+        meta = metadatas[i]
+
         results.append(
             Result(
-                text=text,
+                text=documents[i],
                 source=str(meta.get("source", "unknown")),
                 label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
-                distance=float(distance),
+                distance=float(distances[i]),
                 produced_by=str(meta.get("produced_by", "unknown")),
             )
         )
+
     return results
 
 
