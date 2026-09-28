@@ -350,6 +350,29 @@ The answer contains both expected facts, but not as one exact phrase. Under lite
      low, and which one you'd tighten and to what.
 
      Milestone 3. -->
+## Diagnoses
+
+After reviewing the before-run results, I did not find a true retrieval or generation failure after revising Criterion 5's measurement. Criteria 1 through 4 were met in all three checks, and the revised version of Criterion 5 was also met.
+
+### Criterion 5 — original measurement miss
+
+**Stage:** Generation / evaluation measurement
+
+**Mechanism:** The generated answers contained the correct facts but often paraphrased them instead of repeating the full `expects` phrase from `questions.py` word-for-word. For example, the first-generation answer mentioned both the advising office and asking about the unwritten rules, but it did not reproduce the exact phrase `"ask about the unwritten rules and use the advising office"`.
+
+Because of this, literal phrase matching scored correct answers as failures. The problem was with how the criterion measured correctness rather than with retrieval: the needed information was present in the retrieved chunks, and the generated answers used that information correctly.
+
+### Pattern I noticed
+
+The system consistently retrieved the information needed to answer all five test questions. However, some queries also returned unrelated chunks farther down the top-5 results. For the pass/fail question, for example, the first retrieved chunk only contained information about pass/fail limits, while the second retrieved chunk contained the information needed to answer the question.
+
+This did not cause a failure in the current tests because the correct information was still available to the generator, but retrieval ranking could be made more precise.
+
+### If I tightened a criterion
+
+Since the system met the revised criteria, some of my original targets may have been fairly forgiving. I would tighten Criterion 1 from requiring the answer to appear anywhere in the retrieved results to requiring the answer to appear within the top 3 results, or possibly the top result.
+
+That would test retrieval ranking quality rather than only checking whether the correct information appeared somewhere in the top 5.
 
 ## The Improvement
 
