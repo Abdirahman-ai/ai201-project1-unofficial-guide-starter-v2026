@@ -165,18 +165,9 @@ I chose 0.65 because it falls clearly between the two groups.
 |  |  |  |
 
 ## How I Used AI
-I used ChatGPT to help me think through a chunking strategy for the advice_threads
-corpus. The original splitter used fixed character windows and produced a
-2-character chunk. I used the suggestion as a starting point, then changed the
-chunker so it splits on paragraph boundaries and keeps complete replies together.
+For Unit 2, I used ChatGPT to help review my before-run results, compare them against the acceptance criteria I had already written, and identify that Criterion 5 was measuring exact wording rather than answer correctness.
 
-I also used ChatGPT to help interpret my retrieval distance results. I compared
-the five in-scope distances with five out-of-scope distances, then chose a
-relevance cutoff of 0.65 based on the gap between the two groups.
-
-**1.**
-
-**2.**
+I also used ChatGPT to help think through one retrieval improvement. I implemented hybrid semantic and BM25 retrieval, then compared the before and after results. The measured results showed that the change did not fix the specific ranking issue I was targeting, so I reported that result instead of continuing to tune it.he specific ranking issue I was targeting, so I reported that result instead of continuing to tune it.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
@@ -460,17 +451,24 @@ The change did alter some of the lower-ranked chunks returned for the test quest
 
 ## What's Still Broken
 
-<!-- For each criterion still missed after your fix: what you'd do about it,
-     and why you stopped where you did.
+The main issue that is still unresolved is retrieval ranking for some questions. For the pass/fail question, the chunk containing usage-limit information still ranked above the chunk containing the more directly useful answer about when to use pass/fail.
 
-     "I ran out of time" is fine if it's true. Pretending nothing is left is
-     not.
+If I continued working on this, I would test a different retrieval-ranking approach or adjust how exact terms from the question influence ranking. I stopped after the hybrid-search experiment because this unit requires one measured improvement, and I wanted to preserve a clear before-and-after comparison rather than keep tuning the system after seeing the results.
 
-     Milestone 5. -->
+The original version of Criterion 5 also remains a poor way to measure answer correctness because it requires an exact expected phrase. I documented a Unit 2 revision that checks whether the expected facts are present instead of requiring identical wording.
 
 ## What I'd Do Differently
 
-<!-- Knowing what you know now — which of your five criteria would you write
-     differently, and why?
+If I wrote the criteria again, I would make Criterion 1 stricter.
 
-     Milestone 5. -->
+Instead of:
+
+> For at least 4 of my 5 test questions, the retrieved chunks include one that contains the answer.
+
+I would use something like:
+
+> For at least 4 of my 5 test questions, one of the top 3 retrieved chunks contains the answer.
+
+The original criterion only measured whether the correct information appeared somewhere in the top 5, so it did not capture ranking quality. My tests showed that the system could meet the criterion even when a less useful chunk ranked above the chunk containing the direct answer.
+
+I would also avoid using one exact full phrase as the expected-answer measurement in Criterion 5. I would define the key facts that must appear so paraphrases can still count as correct.
